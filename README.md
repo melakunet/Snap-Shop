@@ -1,0 +1,1 @@
+Snap & Shop — a native iOS app that identifies any product from a photo or short video and shows live prices across major retailers. Built for the Mobile Web Development Mobile Capstone (MWDMC) course at triOS College.
