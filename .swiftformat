@@ -1,0 +1,11 @@
+--indent 4
+--linebreaks lf
+--trimwhitespace always
+--semicolons never
+--commas always
+--wraparguments beforefirst
+--wrapcollections beforefirst
+--closingparen balanced
+--importgrouping testable-last
+--swiftversion 5.9
+--exclude Snap&Shop.xcodeproj,.build,DerivedData,.github
