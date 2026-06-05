@@ -164,12 +164,12 @@ private struct Retailer: Identifiable {
     let icon: String
 
     static let all: [Retailer] = [
-        Retailer(name: "Amazon",   icon: "cart.fill"),
-        Retailer(name: "Walmart",  icon: "bag.fill"),
+        Retailer(name: "Amazon", icon: "cart.fill"),
+        Retailer(name: "Walmart", icon: "bag.fill"),
         Retailer(name: "Best Buy", icon: "tv.fill"),
-        Retailer(name: "eBay",     icon: "tag.fill"),
-        Retailer(name: "Target",   icon: "scope"),
-        Retailer(name: "B&H",      icon: "camera.fill"),
+        Retailer(name: "eBay", icon: "tag.fill"),
+        Retailer(name: "Target", icon: "scope"),
+        Retailer(name: "B&H", icon: "camera.fill")
     ]
 }
 

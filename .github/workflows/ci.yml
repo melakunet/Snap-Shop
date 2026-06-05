@@ -36,19 +36,35 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
 
-      - name: Prepare iOS Simulator
+      - name: Resolve Simulator Destination
         run: |
-          # Find an available iPhone simulator; create one from the latest iOS runtime if needed
-          if ! xcrun simctl list devices available 2>/dev/null | grep -q "iPhone"; then
-            RT=$(xcrun simctl list runtimes ios --json 2>/dev/null | python3 -c \
-              "import sys,json; rts=[r for r in json.load(sys.stdin).get('runtimes',[]) \
-               if r.get('isAvailable',False)]; \
-               print(sorted(rts,key=lambda x:x.get('version',''))[-1]['identifier'])" \
-              2>/dev/null || echo "")
-            [ -n "$RT" ] && xcrun simctl create "iPhone 16 Pro" "iPhone 16 Pro" "$RT" || \
-              echo "No iOS runtime found; xcodebuild will attempt to resolve automatically"
+          python3 -c "
+          import subprocess, json, sys
+          out = subprocess.run(['xcrun','simctl','list','devices','available','--json'],
+                               capture_output=True, text=True).stdout
+          data = json.loads(out)
+          for rt, devs in data.get('devices',{}).items():
+              if 'iOS' in rt:
+                  for d in devs:
+                      if 'iPhone' in d.get('name','') and d.get('isAvailable', False):
+                          print(d['udid'])
+                          sys.exit(0)
+          for rt, devs in data.get('devices',{}).items():
+              for d in devs:
+                  if 'Vision Pro' in d.get('name','') and d.get('isAvailable', False):
+                      print('visionos:' + d['udid'])
+                      sys.exit(0)
+          " > /tmp/simudid.txt 2>/dev/null || echo "" > /tmp/simudid.txt
+          SIMUDID=$(cat /tmp/simudid.txt)
+          if [[ "$SIMUDID" == visionos:* ]]; then
+            DEST="platform=visionOS Simulator,variant=Designed for [iPad,iPhone],id=${SIMUDID#visionos:}"
+          elif [ -n "$SIMUDID" ]; then
+            DEST="platform=iOS Simulator,id=$SIMUDID"
+          else
+            DEST="platform=iOS Simulator,OS=latest,name=iPhone 16 Pro"
           fi
-          xcrun simctl list devices available | grep -E "iPhone" | head -5 || true
+          echo "SIM_DEST=$DEST" >> "$GITHUB_ENV"
+          echo "Resolved destination: $DEST"
 
       - name: Build & Test
         run: |
@@ -56,7 +72,7 @@ jobs:
           xcodebuild test \
             -project 'Snap&Shop.xcodeproj' \
             -scheme 'Snap&Shop' \
-            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16 Pro' \
+            -destination "$SIM_DEST" \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO

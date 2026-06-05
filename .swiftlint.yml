@@ -1,6 +1,7 @@
 disabled_rules:
   - trailing_whitespace
   - todo
+  - static_over_final_class
 
 opt_in_rules:
   - empty_count

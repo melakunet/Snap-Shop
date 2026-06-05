@@ -198,21 +198,21 @@ private enum Plan: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .annual:  "Annual"
+        case .annual: "Annual"
         case .monthly: "Monthly"
         }
     }
 
     var price: String {
         switch self {
-        case .annual:  "$39.99"
+        case .annual: "$39.99"
         case .monthly: "$4.99"
         }
     }
 
     var priceDescription: String {
         switch self {
-        case .annual:  "$3.33 / month — save 33%"
+        case .annual: "$3.33 / month — save 33%"
         case .monthly: "Billed monthly"
         }
     }
@@ -224,11 +224,11 @@ private struct Feature: Identifiable {
     let subtitle: String
 
     static let all: [Feature] = [
-        Feature(title: "Unlimited Scans",    subtitle: "Scan as many products as you like"),
-        Feature(title: "Deep / Video Scan",  subtitle: "Multi-image burst & video pan support"),
-        Feature(title: "Live Price Tracking",subtitle: "Real-time results from 6+ retailers"),
-        Feature(title: "Price Drop Alerts",  subtitle: "Get notified when a saved item drops"),
-        Feature(title: "iCloud Sync",        subtitle: "History & favourites across all your devices"),
+        Feature(title: "Unlimited Scans", subtitle: "Scan as many products as you like"),
+        Feature(title: "Deep / Video Scan", subtitle: "Multi-image burst & video pan support"),
+        Feature(title: "Live Price Tracking", subtitle: "Real-time results from 6+ retailers"),
+        Feature(title: "Price Drop Alerts", subtitle: "Get notified when a saved item drops"),
+        Feature(title: "iCloud Sync", subtitle: "History & favourites across all your devices")
     ]
 }
 
