@@ -7,7 +7,7 @@ private struct OnboardingSlide {
 }
 
 struct OnboardingView: View {
-    var onComplete: () -> Void = { }
+    var onComplete: () -> Void = {}
 
     @State private var currentPage = 0
 

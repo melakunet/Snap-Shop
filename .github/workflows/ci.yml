@@ -36,43 +36,13 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
 
-      - name: Resolve Simulator Destination
-        run: |
-          python3 -c "
-          import subprocess, json, sys
-          out = subprocess.run(['xcrun','simctl','list','devices','available','--json'],
-                               capture_output=True, text=True).stdout
-          data = json.loads(out)
-          for rt, devs in data.get('devices',{}).items():
-              if 'iOS' in rt:
-                  for d in devs:
-                      if 'iPhone' in d.get('name','') and d.get('isAvailable', False):
-                          print(d['udid'])
-                          sys.exit(0)
-          for rt, devs in data.get('devices',{}).items():
-              for d in devs:
-                  if 'Vision Pro' in d.get('name','') and d.get('isAvailable', False):
-                      print('visionos:' + d['udid'])
-                      sys.exit(0)
-          " > /tmp/simudid.txt 2>/dev/null || echo "" > /tmp/simudid.txt
-          SIMUDID=$(cat /tmp/simudid.txt)
-          if [[ "$SIMUDID" == visionos:* ]]; then
-            DEST="platform=visionOS Simulator,variant=Designed for [iPad,iPhone],id=${SIMUDID#visionos:}"
-          elif [ -n "$SIMUDID" ]; then
-            DEST="platform=iOS Simulator,id=$SIMUDID"
-          else
-            DEST="platform=iOS Simulator,OS=latest,name=iPhone 16 Pro"
-          fi
-          echo "SIM_DEST=$DEST" >> "$GITHUB_ENV"
-          echo "Resolved destination: $DEST"
-
       - name: Build & Test
         run: |
           set -o pipefail
           xcodebuild test \
             -project 'Snap&Shop.xcodeproj' \
             -scheme 'Snap&Shop' \
-            -destination "$SIM_DEST" \
+            -destination 'platform=visionOS Simulator,variant=Designed for [iPad,iPhone],OS=latest,name=Apple Vision Pro' \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO

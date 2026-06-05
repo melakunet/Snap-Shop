@@ -116,7 +116,7 @@ struct ResultsView: View {
                 Text(result.price)
                     .font(Typography.callout.weight(.bold))
                     .foregroundStyle(result.isBest ? Color.Brand.success : Color.Brand.textPrimary)
-                Button("View") { }
+                Button("View") {}
                     .font(Typography.caption.weight(.semibold))
                     .foregroundStyle(Color.Brand.accent)
             }
