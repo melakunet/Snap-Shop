@@ -48,7 +48,7 @@ struct CameraView: View {
 
     private var topBar: some View {
         HStack {
-            circleButton("xmark") {}
+            circleButton("xmark") { }
             Spacer()
             Text("Snap & Shop")
                 .font(Typography.callout.weight(.semibold))
@@ -85,7 +85,7 @@ struct CameraView: View {
     private var modeToggle: some View {
         HStack(spacing: 0) {
             modeButton("Precision", icon: "camera.aperture", mode: .precision)
-            modeButton("Deep",      icon: "video.fill",      mode: .deep)
+            modeButton("Deep", icon: "video.fill", mode: .deep)
         }
         .background(Color.white.opacity(0.10))
         .clipShape(RoundedRectangle(cornerRadius: Radius.sm))
@@ -234,41 +234,50 @@ struct CameraView: View {
 
 private struct CornerBrackets: Shape {
     var bracketLength: CGFloat = 26
-    private let cr: CGFloat = 16  // matches Radius.lg
+    private let cornerRadius: CGFloat = 16
 
     func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let l = bracketLength
+        var pathResult = Path()
+        let length = bracketLength
+        let curve = cornerRadius
 
         // Top-left
-        p.move(to: CGPoint(x: rect.minX, y: rect.minY + l))
-        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY + cr))
-        p.addQuadCurve(to: CGPoint(x: rect.minX + cr, y: rect.minY),
-                       control: CGPoint(x: rect.minX, y: rect.minY))
-        p.addLine(to: CGPoint(x: rect.minX + l, y: rect.minY))
+        pathResult.move(to: CGPoint(x: rect.minX, y: rect.minY + length))
+        pathResult.addLine(to: CGPoint(x: rect.minX, y: rect.minY + curve))
+        pathResult.addQuadCurve(
+            to: CGPoint(x: rect.minX + curve, y: rect.minY),
+            control: CGPoint(x: rect.minX, y: rect.minY)
+        )
+        pathResult.addLine(to: CGPoint(x: rect.minX + length, y: rect.minY))
 
         // Top-right
-        p.move(to: CGPoint(x: rect.maxX - l, y: rect.minY))
-        p.addLine(to: CGPoint(x: rect.maxX - cr, y: rect.minY))
-        p.addQuadCurve(to: CGPoint(x: rect.maxX, y: rect.minY + cr),
-                       control: CGPoint(x: rect.maxX, y: rect.minY))
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + l))
+        pathResult.move(to: CGPoint(x: rect.maxX - length, y: rect.minY))
+        pathResult.addLine(to: CGPoint(x: rect.maxX - curve, y: rect.minY))
+        pathResult.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.minY + curve),
+            control: CGPoint(x: rect.maxX, y: rect.minY)
+        )
+        pathResult.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + length))
 
         // Bottom-right
-        p.move(to: CGPoint(x: rect.maxX, y: rect.maxY - l))
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cr))
-        p.addQuadCurve(to: CGPoint(x: rect.maxX - cr, y: rect.maxY),
-                       control: CGPoint(x: rect.maxX, y: rect.maxY))
-        p.addLine(to: CGPoint(x: rect.maxX - l, y: rect.maxY))
+        pathResult.move(to: CGPoint(x: rect.maxX, y: rect.maxY - length))
+        pathResult.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - curve))
+        pathResult.addQuadCurve(
+            to: CGPoint(x: rect.maxX - curve, y: rect.maxY),
+            control: CGPoint(x: rect.maxX, y: rect.maxY)
+        )
+        pathResult.addLine(to: CGPoint(x: rect.maxX - length, y: rect.maxY))
 
         // Bottom-left
-        p.move(to: CGPoint(x: rect.minX + l, y: rect.maxY))
-        p.addLine(to: CGPoint(x: rect.minX + cr, y: rect.maxY))
-        p.addQuadCurve(to: CGPoint(x: rect.minX, y: rect.maxY - cr),
-                       control: CGPoint(x: rect.minX, y: rect.maxY))
-        p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - l))
+        pathResult.move(to: CGPoint(x: rect.minX + length, y: rect.maxY))
+        pathResult.addLine(to: CGPoint(x: rect.minX + curve, y: rect.maxY))
+        pathResult.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.maxY - curve),
+            control: CGPoint(x: rect.minX, y: rect.maxY)
+        )
+        pathResult.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - length))
 
-        return p
+        return pathResult
     }
 }
 
