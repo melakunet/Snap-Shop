@@ -105,9 +105,7 @@ struct ResultsView: View {
                     Text(result.retailer)
                         .font(Typography.callout.weight(.semibold))
                         .foregroundStyle(Color.Brand.textPrimary)
-                    if result.isBest {
-                        bestBadge
-                    }
+                    if result.isBest { bestBadge }
                 }
                 Text("\(result.shipping) shipping · \(result.rating)")
                     .font(Typography.caption)
@@ -118,7 +116,7 @@ struct ResultsView: View {
                 Text(result.price)
                     .font(Typography.callout.weight(.bold))
                     .foregroundStyle(result.isBest ? Color.Brand.success : Color.Brand.textPrimary)
-                Button("View") {}
+                Button("View") { }
                     .font(Typography.caption.weight(.semibold))
                     .foregroundStyle(Color.Brand.accent)
             }
@@ -191,52 +189,47 @@ struct ResultsView: View {
 
     private var emptyView: some View {
         centeredState(
-            icon: "magnifyingglass",
-            iconColor: Color.Brand.textSecondary,
-            title: "No results found",
-            body: "We couldn't match this product.\nTry Deep Scan for a better result.",
-            actionLabel: "Try Deep Scan",
-            action: { phase = .loading }
-        )
+            CenteredStateConfig(
+                icon: "magnifyingglass",
+                iconColor: Color.Brand.textSecondary,
+                title: "No results found",
+                body: "We couldn't match this product.\nTry Deep Scan for a better result.",
+                actionLabel: "Try Deep Scan"
+            )
+        ) { phase = .loading }
     }
 
     // MARK: — Error
 
     private func errorView(_ message: String) -> some View {
         centeredState(
-            icon: "wifi.exclamationmark",
-            iconColor: Color.Brand.error,
-            title: "Couldn't load prices",
-            body: message,
-            actionLabel: "Try Again",
-            action: { phase = .loading }
-        )
+            CenteredStateConfig(
+                icon: "wifi.exclamationmark",
+                iconColor: Color.Brand.error,
+                title: "Couldn't load prices",
+                body: message,
+                actionLabel: "Try Again"
+            )
+        ) { phase = .loading }
     }
 
-    // MARK: — Shared centered layout
+    // MARK: — Shared centred layout
 
-    private func centeredState(
-        icon: String,
-        iconColor: Color,
-        title: String,
-        body bodyText: String,
-        actionLabel: String,
-        action: @escaping () -> Void
-    ) -> some View {
+    private func centeredState(_ config: CenteredStateConfig, action: @escaping () -> Void) -> some View {
         VStack(spacing: Spacing.xl) {
-            Image(systemName: icon)
+            Image(systemName: config.icon)
                 .font(.system(size: 52))
-                .foregroundStyle(iconColor)
+                .foregroundStyle(config.iconColor)
             VStack(spacing: Spacing.sm) {
-                Text(title)
+                Text(config.title)
                     .font(Typography.headline)
                     .foregroundStyle(Color.Brand.textPrimary)
-                Text(bodyText)
+                Text(config.body)
                     .font(Typography.body)
                     .foregroundStyle(Color.Brand.textSecondary)
                     .multilineTextAlignment(.center)
             }
-            Button(actionLabel, action: action)
+            Button(config.actionLabel, action: action)
                 .font(Typography.callout.weight(.semibold))
                 .foregroundStyle(Color.Brand.accentOn)
                 .padding(.horizontal, Spacing.xxl)
@@ -263,20 +256,30 @@ struct ResultsView: View {
     }
 }
 
+// MARK: — Config type (replaces 6-param centeredState)
+
+private struct CenteredStateConfig {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let body: String
+    let actionLabel: String
+}
+
 // MARK: — Shimmer helper
 
 private struct ShimmerRect: View {
-    @State private var on = false
+    @State private var isShimmering = false
     var height: CGFloat
 
     var body: some View {
         RoundedRectangle(cornerRadius: Radius.sm)
             .fill(Color.Brand.surfaceAlt)
             .frame(height: height)
-            .opacity(on ? 0.4 : 0.9)
+            .opacity(isShimmering ? 0.4 : 0.9)
             .onAppear {
                 withAnimation(.easeInOut(duration: 0.85).repeatForever(autoreverses: true)) {
-                    on = true
+                    isShimmering = true
                 }
             }
     }
@@ -286,16 +289,16 @@ private struct ShimmerRect: View {
 
 extension PriceResult {
     static let samples: [PriceResult] = [
-        PriceResult(retailer: "Amazon",   price: "$279.99", shipping: "Free",   rating: "4.8★", isBest: true),
-        PriceResult(retailer: "Walmart",  price: "$289.95", shipping: "$5.99",  rating: "4.6★", isBest: false),
-        PriceResult(retailer: "Best Buy", price: "$299.99", shipping: "Free",   rating: "4.7★", isBest: false),
-        PriceResult(retailer: "eBay",     price: "$259.00", shipping: "$12.00", rating: "4.4★", isBest: false),
-        PriceResult(retailer: "Target",   price: "$319.99", shipping: "Free",   rating: "4.5★", isBest: false),
+        PriceResult(retailer: "Amazon", price: "$279.99", shipping: "Free", rating: "4.8★", isBest: true),
+        PriceResult(retailer: "Walmart", price: "$289.95", shipping: "$5.99", rating: "4.6★", isBest: false),
+        PriceResult(retailer: "Best Buy", price: "$299.99", shipping: "Free", rating: "4.7★", isBest: false),
+        PriceResult(retailer: "eBay", price: "$259.00", shipping: "$12.00", rating: "4.4★", isBest: false),
+        PriceResult(retailer: "Target", price: "$319.99", shipping: "Free", rating: "4.5★", isBest: false)
     ]
 }
 
 #Preview("Loaded — Precision") { ResultsView() }
-#Preview("Loaded — Deep")      { ResultsView(scanMode: .deep) }
-#Preview("Loading")            { ResultsView(phase: .loading) }
-#Preview("Empty")              { ResultsView(phase: .empty) }
-#Preview("Error")              { ResultsView(phase: .error("Network connection lost. Check your Wi-Fi.")) }
+#Preview("Loaded — Deep") { ResultsView(scanMode: .deep) }
+#Preview("Loading") { ResultsView(phase: .loading) }
+#Preview("Empty") { ResultsView(phase: .empty) }
+#Preview("Error") { ResultsView(phase: .error("Network connection lost. Check your Wi-Fi.")) }

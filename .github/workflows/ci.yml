@@ -9,7 +9,7 @@ on:
 jobs:
   lint:
     name: SwiftLint & SwiftFormat
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,10 +28,27 @@ jobs:
 
   build-and-test:
     name: Build & Test
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: Prepare iOS Simulator
+        run: |
+          # Find an available iPhone simulator; create one from the latest iOS runtime if needed
+          if ! xcrun simctl list devices available 2>/dev/null | grep -q "iPhone"; then
+            RT=$(xcrun simctl list runtimes ios --json 2>/dev/null | python3 -c \
+              "import sys,json; rts=[r for r in json.load(sys.stdin).get('runtimes',[]) \
+               if r.get('isAvailable',False)]; \
+               print(sorted(rts,key=lambda x:x.get('version',''))[-1]['identifier'])" \
+              2>/dev/null || echo "")
+            [ -n "$RT" ] && xcrun simctl create "iPhone 16 Pro" "iPhone 16 Pro" "$RT" || \
+              echo "No iOS runtime found; xcodebuild will attempt to resolve automatically"
+          fi
+          xcrun simctl list devices available | grep -E "iPhone" | head -5 || true
 
       - name: Build & Test
         run: |

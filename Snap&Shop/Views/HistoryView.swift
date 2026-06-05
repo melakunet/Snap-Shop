@@ -113,7 +113,7 @@ struct HistoryView: View {
     }
 
     private func modeBadge(_ mode: ScanMode) -> some View {
-        let bg = mode == .precision ? Color.Brand.accent : Color.Brand.scanDeep
+        let badgeColor = mode == .precision ? Color.Brand.accent : Color.Brand.scanDeep
         return HStack(spacing: 3) {
             Image(systemName: mode == .precision ? "camera.aperture" : "video.fill")
                 .font(.system(size: 9, weight: .semibold))
@@ -123,7 +123,7 @@ struct HistoryView: View {
         .foregroundStyle(mode == .precision ? Color.Brand.accentOn : .white)
         .padding(.horizontal, Spacing.sm)
         .padding(.vertical, 2)
-        .background(bg)
+        .background(badgeColor)
         .clipShape(Capsule())
     }
 
@@ -222,17 +222,17 @@ struct HistoryView: View {
 // MARK: — Shimmer helper
 
 private struct ShimmerRect: View {
-    @State private var on = false
+    @State private var isShimmering = false
     var height: CGFloat
 
     var body: some View {
         RoundedRectangle(cornerRadius: Radius.sm)
             .fill(Color.Brand.surfaceAlt)
             .frame(height: height)
-            .opacity(on ? 0.4 : 0.9)
+            .opacity(isShimmering ? 0.4 : 0.9)
             .onAppear {
                 withAnimation(.easeInOut(duration: 0.85).repeatForever(autoreverses: true)) {
-                    on = true
+                    isShimmering = true
                 }
             }
     }
@@ -262,11 +262,11 @@ extension HistoryItem {
             date: Calendar.current.date(byAdding: .day, value: -3, to: .now)!,
             lowestPrice: 899.00,
             retailer: "Best Buy"
-        ),
+        )
     ]
 }
 
-#Preview("Loaded")  { HistoryView() }
+#Preview("Loaded") { HistoryView() }
 #Preview("Loading") { HistoryView(phase: .loading) }
-#Preview("Empty")   { HistoryView(phase: .loaded([])) }
-#Preview("Error")   { HistoryView(phase: .error("Could not connect to iCloud.")) }
+#Preview("Empty") { HistoryView(phase: .loaded([])) }
+#Preview("Error") { HistoryView(phase: .error("Could not connect to iCloud.")) }
