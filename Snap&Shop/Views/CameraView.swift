@@ -48,7 +48,7 @@ struct CameraView: View {
 
     private var topBar: some View {
         HStack {
-            circleButton("xmark") { }
+            circleButton("xmark") {}
             Spacer()
             Text("Snap & Shop")
                 .font(Typography.callout.weight(.semibold))
@@ -177,9 +177,7 @@ struct CameraView: View {
         HStack(spacing: Spacing.xs) {
             Image(systemName: scanMode == .precision ? "scope" : "arrow.left.and.right")
                 .font(.system(size: 11))
-            Text(scanMode == .precision
-                 ? "Hold steady — one precise shot"
-                 : "Pan slowly — capturing all angles")
+            Text(scanMode == .precision ? "Hold steady — one precise shot" : "Pan slowly — capturing all angles")
                 .font(Typography.caption)
         }
         .foregroundStyle(.white.opacity(0.65))

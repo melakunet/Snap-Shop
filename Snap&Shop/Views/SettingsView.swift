@@ -45,9 +45,7 @@ struct SettingsView: View {
                 Circle()
                     .fill(defaultMode == .precision ? Color.Brand.accent : Color.Brand.scanDeep)
                     .frame(width: 8, height: 8)
-                Text(defaultMode == .precision
-                     ? "Single high-accuracy photo"
-                     : "Video pan & multi-image burst")
+                Text(defaultMode == .precision ? "Single high-accuracy photo" : "Video pan & multi-image burst")
                     .font(Typography.caption)
                     .foregroundStyle(Color.Brand.textSecondary)
             }
