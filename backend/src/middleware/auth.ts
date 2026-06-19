@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import type { MiddlewareHandler } from 'hono'
-import type { Env } from '../lib/schema'
+import type { Env, Variables } from '../lib/schema'
 import { errorBody } from '../lib/errors'
 
 const APPLE_JWKS_URL = new URL('https://appleid.apple.com/auth/keys')
@@ -15,8 +15,6 @@ function getAppleJWKS() {
   }
   return appleJWKS
 }
-
-export type Variables = { userId: string }
 
 export const auth: MiddlewareHandler<{ Bindings: Env; Variables: Variables }> = async (c, next) => {
   // Dev bypass — only when ENVIRONMENT === 'dev' AND DEV_AUTH_BYPASS === '1'

@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import type { Env } from './lib/schema'
-import { auth, type Variables } from './middleware/auth'
+import type { Env, Variables } from './lib/schema'
+import { auth } from './middleware/auth'
 import precisionRoute from './routes/identify-precision'
 import deepRoute from './routes/identify-deep'
 import shopRoute from './routes/shop'

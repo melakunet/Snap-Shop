@@ -1,5 +1,4 @@
-import type { Env } from '../lib/schema'
-import type { IdentifyResult } from './claude'
+import type { Env, IdentifyResult } from '../lib/schema'
 
 export async function identifyWithGemini(
   _imageBase64: string,
