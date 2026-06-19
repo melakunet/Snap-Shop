@@ -2,6 +2,19 @@ import type { Env, ShopItem } from '../lib/schema'
 
 const SERPAPI_URL = 'https://serpapi.com/search'
 
+// Dev mock returned when SERPAPI_KEY is not configured
+function mockResults(query: string, whitelist: string[]): ShopItem[] {
+  const all: ShopItem[] = [
+    { price: '$29.99', extracted_price: 29.99, delivery: 'Free delivery', source: 'Amazon.com', link: `https://amazon.com/s?k=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$34.95', extracted_price: 34.95, delivery: '2-day shipping', source: 'Walmart', link: `https://walmart.com/search?q=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$42.00', extracted_price: 42.00, delivery: 'Free shipping', source: 'Target', link: `https://target.com/s?searchTerm=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$38.50', extracted_price: 38.50, delivery: 'Ships from Nike', source: 'Nike', link: `https://nike.com/search?q=${encodeURIComponent(query)}`, thumbnail: '' },
+  ]
+  const norm = whitelist.map((w) => w.toLowerCase())
+  const filtered = norm.length === 0 ? all : all.filter((r) => norm.some((w) => r.source.toLowerCase().includes(w)))
+  return filtered.slice(0, 10)
+}
+
 interface SerpResult {
   price?: string
   extracted_price?: number
@@ -21,6 +34,8 @@ export async function fetchShoppingResults(
   retailerWhitelist: string[],
   env: Env,
 ): Promise<ShopItem[]> {
+  if (!env.SERPAPI_KEY) return mockResults(query, retailerWhitelist)
+
   const params = new URLSearchParams({
     engine: 'google_shopping',
     q: query,
