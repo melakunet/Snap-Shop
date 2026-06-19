@@ -2,6 +2,18 @@ import type { Env } from '../lib/schema'
 import { IdentifyResult } from '../lib/schema'
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
+
+// Dev mock returned when ANTHROPIC_API_KEY is not configured
+function mockIdentifyResult(): IdentifyResult {
+  return {
+    brand: 'Nike',
+    model: 'Air Force 1',
+    category: 'sneaker',
+    distinguishing_features: ['Low-top profile', 'Perforated toe box', 'Swoosh logo', 'Rubber cupsole'],
+    confidence: 0.87,
+    search_query: 'Nike Air Force 1 low sneaker',
+  }
+}
 export const SONNET = 'claude-sonnet-4-6'
 export const OPUS = 'claude-opus-4-7'
 
@@ -95,6 +107,8 @@ export async function identifyWithClaude(
   env: Env,
   isPro: boolean,
 ): Promise<IdentifyResult> {
+  if (!env.ANTHROPIC_API_KEY) return mockIdentifyResult()
+
   const base = { imageBase64, mediaType, apiKey: env.ANTHROPIC_API_KEY }
 
   const result = await callAndParse({ ...base, model: SONNET })

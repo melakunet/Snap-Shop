@@ -21,7 +21,6 @@ function toBase64(buf: ArrayBuffer): string {
 
 // POST /identify/precision — Claude Vision (Sonnet 4.6 default, Opus 4.7 for Pro + low confidence)
 route.post('/', async (c) => {
-  const userId = c.get('userId')
   const isPro = c.req.header('X-Tier') === 'pro'
 
   let formData: FormData
@@ -55,7 +54,10 @@ route.post('/', async (c) => {
     await captureError(c.env.SENTRY_DSN, {
       error,
       route: 'POST /identify/precision',
-      extras: { userId, tier: isPro ? 'pro' : 'free' },
+      requestId: c.get('requestId'),
+      latencyMs: Date.now() - (c.get('startMs') ?? Date.now()),
+      status: 502,
+      extras: { tier: isPro ? 'pro' : 'free' },
     })
     return c.json(errorBody('upstream_error', 'Product identification failed'), 502)
   }

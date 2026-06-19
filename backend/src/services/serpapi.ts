@@ -9,6 +9,9 @@ function mockResults(query: string, whitelist: string[]): ShopItem[] {
     { price: '$34.95', extracted_price: 34.95, delivery: '2-day shipping', source: 'Walmart', link: `https://walmart.com/search?q=${encodeURIComponent(query)}`, thumbnail: '' },
     { price: '$42.00', extracted_price: 42.00, delivery: 'Free shipping', source: 'Target', link: `https://target.com/s?searchTerm=${encodeURIComponent(query)}`, thumbnail: '' },
     { price: '$38.50', extracted_price: 38.50, delivery: 'Ships from Nike', source: 'Nike', link: `https://nike.com/search?q=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$31.99', extracted_price: 31.99, delivery: 'Free shipping over $35', source: 'Best Buy', link: `https://bestbuy.com/site/searchpage.jsp?st=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$27.50', extracted_price: 27.50, delivery: 'Varies', source: 'eBay', link: `https://ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`, thumbnail: '' },
+    { price: '$44.00', extracted_price: 44.00, delivery: 'Free shipping', source: 'Adidas', link: `https://adidas.com/us/search?q=${encodeURIComponent(query)}`, thumbnail: '' },
   ]
   const norm = whitelist.map((w) => w.toLowerCase())
   const filtered = norm.length === 0 ? all : all.filter((r) => norm.some((w) => r.source.toLowerCase().includes(w)))

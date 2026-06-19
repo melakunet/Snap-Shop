@@ -14,8 +14,8 @@ export const Env = z.object({
 })
 export type Env = z.infer<typeof Env>
 
-// Shared Hono context variables set by auth middleware
-export type Variables = { userId: string }
+// Shared Hono context variables set by auth and telemetry middleware
+export type Variables = { userId: string; requestId?: string; startMs?: number }
 
 // Route A — single product identification result
 export const IdentifyResult = z.object({

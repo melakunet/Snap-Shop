@@ -22,6 +22,13 @@ struct OnboardingView: View {
             Color.Brand.background.ignoresSafeArea()
 
             VStack(spacing: 0) {
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .padding(.top, Spacing.xl)
+
                 TabView(selection: $currentPage) {
                     ForEach(Array(slides.enumerated()), id: \.offset) { index, slide in
                         slideView(slide)
