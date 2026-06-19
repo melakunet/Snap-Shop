@@ -40,5 +40,6 @@ jobs:
             -project 'Snap&Shop.xcodeproj' \
             -scheme 'Snap&Shop' \
             -destination 'generic/platform=iOS Simulator' \
+            IPHONEOS_DEPLOYMENT_TARGET=18.0 \
             CODE_SIGNING_ALLOWED=NO
 
