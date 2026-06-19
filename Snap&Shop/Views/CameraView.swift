@@ -50,9 +50,11 @@ struct CameraView: View {
         HStack {
             circleButton("xmark") {}
             Spacer()
-            Text("Snap & Shop")
-                .font(Typography.callout.weight(.semibold))
-                .foregroundStyle(.white)
+            Image("AppLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 28, height: 28)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
             Spacer()
             flashToggleButton
         }

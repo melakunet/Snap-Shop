@@ -5,6 +5,7 @@ import { rateLimit } from './middleware/ratelimit'
 import { telemetry } from './middleware/telemetry'
 import { captureError } from './lib/sentry'
 import { errorBody } from './lib/errors'
+import { spec, swaggerUiHtml } from './lib/openapi'
 import precisionRoute from './routes/identify-precision'
 import deepRoute from './routes/identify-deep'
 import shopRoute from './routes/shop'
@@ -14,8 +15,10 @@ const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 // Telemetry — runs on every request, sets requestId + startMs in context
 app.use('*', telemetry)
 
-// Public
+// Public — auth-exempt
 app.get('/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }))
+app.get('/swagger.json', (c) => c.json(spec))
+app.get('/docs', (c) => c.html(swaggerUiHtml))
 
 // Dev-only intentional error route for Sentry smoke tests
 app.post('/debug/boom', (c) => {

@@ -23,8 +23,6 @@ function toBase64(buf: ArrayBuffer): string {
 
 // POST /identify/deep — Gemini Vision (2.5 Flash, escalates to 2.5 Pro on low confidence)
 route.post('/', async (c) => {
-  const userId = c.get('userId')
-
   let formData: FormData
   try {
     formData = await c.req.formData()
@@ -69,7 +67,10 @@ route.post('/', async (c) => {
     await captureError(c.env.SENTRY_DSN, {
       error,
       route: 'POST /identify/deep',
-      extras: { userId, frameCount: frames.length },
+      requestId: c.get('requestId'),
+      latencyMs: Date.now() - (c.get('startMs') ?? Date.now()),
+      status: 502,
+      extras: { frameCount: frames.length },
     })
     return c.json(errorBody('upstream_error', 'Product identification failed'), 502)
   }

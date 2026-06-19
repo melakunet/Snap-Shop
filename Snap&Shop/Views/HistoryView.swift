@@ -7,6 +7,7 @@ struct HistoryItem: Identifiable {
     let date: Date
     let lowestPrice: Double
     let retailer: String
+    var imageName: String? = nil
 }
 
 enum HistoryPhase {
@@ -49,7 +50,16 @@ struct HistoryView: View {
             }
             .navigationTitle("History")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar { clearButton }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image("AppLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+                clearButton
+            }
             .background(Color.Brand.background.ignoresSafeArea())
         }
     }
@@ -77,12 +87,22 @@ struct HistoryView: View {
 
     private func historyRow(_ item: HistoryItem) -> some View {
         HStack(spacing: Spacing.md) {
-            ZStack {
-                RoundedRectangle(cornerRadius: Radius.sm)
-                    .fill(Color.Brand.surfaceAlt)
-                    .frame(width: 52, height: 52)
-                Image(systemName: "photo")
-                    .foregroundStyle(Color.Brand.textSecondary)
+            Group {
+                if let imageName = item.imageName {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 52, height: 52)
+                        .clipShape(RoundedRectangle(cornerRadius: Radius.sm))
+                } else {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: Radius.sm)
+                            .fill(Color.Brand.surfaceAlt)
+                            .frame(width: 52, height: 52)
+                        Image(systemName: "photo")
+                            .foregroundStyle(Color.Brand.textSecondary)
+                    }
+                }
             }
 
             VStack(alignment: .leading, spacing: Spacing.xs) {
@@ -247,21 +267,24 @@ extension HistoryItem {
             scanMode: .precision,
             date: .now,
             lowestPrice: 279.99,
-            retailer: "Amazon"
+            retailer: "Amazon",
+            imageName: "product_headphones"
         ),
         HistoryItem(
             productName: "Apple AirPods Pro 2",
             scanMode: .deep,
             date: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,
             lowestPrice: 189.00,
-            retailer: "Walmart"
+            retailer: "Walmart",
+            imageName: "product_airpods"
         ),
         HistoryItem(
             productName: "Samsung 65\" QLED TV",
             scanMode: .deep,
             date: Calendar.current.date(byAdding: .day, value: -3, to: .now)!,
             lowestPrice: 899.00,
-            retailer: "Best Buy"
+            retailer: "Best Buy",
+            imageName: "product_tv"
         )
     ]
 }

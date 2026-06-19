@@ -102,7 +102,8 @@ export const rateLimit: MiddlewareHandler<{ Bindings: Env; Variables: Variables 
     await captureError(c.env.SENTRY_DSN ?? '', {
       error: err instanceof Error ? err : new Error(String(err)),
       route: 'middleware/ratelimit',
-      extras: { userId, family, tier },
+      requestId: c.get('requestId'),
+      extras: { family, tier },
     })
     return next()
   }

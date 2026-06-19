@@ -10,8 +10,6 @@ const route = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // POST /shop — SerpAPI google_shopping with retailer whitelist + 1-hour cache
 route.post('/', async (c) => {
-  const userId = c.get('userId')
-
   let body: unknown
   try {
     body = await c.req.json()
@@ -42,7 +40,7 @@ route.post('/', async (c) => {
     await captureError(c.env.SENTRY_DSN, {
       error: err instanceof Error ? err : new Error(String(err)),
       route: 'POST /shop cache-get',
-      extras: { userId },
+      requestId: c.get('requestId'),
     })
   }
 
@@ -55,7 +53,7 @@ route.post('/', async (c) => {
         void captureError(c.env.SENTRY_DSN, {
           error: err instanceof Error ? err : new Error(String(err)),
           route: 'POST /shop cache-set',
-          extras: { userId },
+          requestId: c.get('requestId'),
         })
       })
     }
@@ -66,7 +64,9 @@ route.post('/', async (c) => {
     await captureError(c.env.SENTRY_DSN, {
       error,
       route: 'POST /shop',
-      extras: { userId },
+      requestId: c.get('requestId'),
+      latencyMs: Date.now() - (c.get('startMs') ?? Date.now()),
+      status: 502,
     })
     return c.json(errorBody('upstream_error', 'Price lookup failed'), 502)
   }

@@ -6,7 +6,7 @@ struct PaywallView: View {
     @State private var isPurchasing = false
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             Color.Brand.background.ignoresSafeArea()
 
             ScrollView {
@@ -22,15 +22,24 @@ struct PaywallView: View {
                 .padding(.bottom, Spacing.xxl)
             }
 
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.Brand.textSecondary)
-                    .frame(width: 30, height: 30)
-                    .background(Color.Brand.surfaceAlt)
-                    .clipShape(Circle())
+            HStack {
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 28, height: 28)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.Brand.textSecondary)
+                        .frame(width: 30, height: 30)
+                        .background(Color.Brand.surfaceAlt)
+                        .clipShape(Circle())
+                }
             }
-            .padding([.top, .trailing], Spacing.xl)
+            .padding([.top, .horizontal], Spacing.xl)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
     }
 
