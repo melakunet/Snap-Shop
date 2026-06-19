@@ -7,7 +7,7 @@ struct HistoryItem: Identifiable {
     let date: Date
     let lowestPrice: Double
     let retailer: String
-    var imageName: String? = nil
+    var imageName: String?
 }
 
 enum HistoryPhase {
