@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "Snap & Shop — Phase 1 Smoke",
+    "description": "End-to-end smoke test: POST /identify/precision → POST /shop.\nRun against wrangler dev (localhost:8787) with DEV_AUTH_BYPASS=1.\n\nAcceptance criteria:\n- P50 latency < 6 s\n- Every /shop response returns ≥ 5 price results",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8787" },
+    { "key": "auth_token", "value": "smoke-test-token" },
+    { "key": "search_query", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Health check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('health ok', () => {",
+              "  pm.response.to.have.status(200);",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.ok).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "2. Identify precision",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "",
+              "pm.test('response has required fields', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('brand');",
+              "  pm.expect(body).to.have.property('model');",
+              "  pm.expect(body).to.have.property('category');",
+              "  pm.expect(body).to.have.property('distinguishing_features').that.is.an('array');",
+              "  pm.expect(body).to.have.property('confidence').that.is.a('number');",
+              "  pm.expect(body).to.have.property('search_query').that.is.a('string').with.length.greaterThan(0);",
+              "});",
+              "",
+              "pm.test('confidence in range [0,1]', () => {",
+              "  const { confidence } = pm.response.json();",
+              "  pm.expect(confidence).to.be.within(0, 1);",
+              "});",
+              "",
+              "pm.test('latency < 6000ms', () => {",
+              "  pm.expect(pm.response.responseTime).to.be.below(6000);",
+              "});",
+              "",
+              "// Stash search_query for the next request",
+              "const { search_query } = pm.response.json();",
+              "pm.collectionVariables.set('search_query', search_query);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+          { "key": "X-Debug-User", "value": "smoke-user" },
+          { "key": "X-Tier", "value": "free" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "image",
+              "type": "file",
+              "src": "./sample.jpg",
+              "description": "Product image (JPEG/PNG, max 10 MB)"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/identify/precision",
+          "host": ["{{base_url}}"],
+          "path": ["identify", "precision"]
+        }
+      }
+    },
+    {
+      "name": "3. Shop — price lookup",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "",
+              "pm.test('returns array', () => {",
+              "  pm.expect(pm.response.json()).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('at least 5 prices', () => {",
+              "  pm.expect(pm.response.json().length).to.be.at.least(5);",
+              "});",
+              "",
+              "pm.test('each item has required fields', () => {",
+              "  const items = pm.response.json();",
+              "  items.forEach((item, i) => {",
+              "    pm.expect(item, `item[${i}]`).to.include.keys(['price', 'extracted_price', 'delivery', 'source', 'link', 'thumbnail']);",
+              "    pm.expect(item.extracted_price, `item[${i}].extracted_price`).to.be.a('number').above(0);",
+              "  });",
+              "});",
+              "",
+              "pm.test('latency < 6000ms', () => {",
+              "  pm.expect(pm.response.responseTime).to.be.below(6000);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+          { "key": "X-Debug-User", "value": "smoke-user" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"{{search_query}}\",\n  \"retailer_whitelist\": []\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/shop",
+          "host": ["{{base_url}}"],
+          "path": ["shop"]
+        }
+      }
+    }
+  ]
+}
