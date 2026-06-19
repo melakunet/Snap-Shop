@@ -1,6 +1,10 @@
 interface SentryEvent {
   error: Error
   route: string
+  requestId?: string
+  latencyMs?: number
+  status?: number
+  modelUsed?: string
   extras?: Record<string, unknown>
 }
 
@@ -39,8 +43,16 @@ export async function captureError(dsn: string, event: SentryEvent): Promise<voi
         exception: {
           values: [{ type: event.error.name, value: event.error.message }],
         },
-        tags: { route: event.route },
-        extra: event.extras,
+        tags: {
+          route: event.route,
+          ...(event.requestId ? { request_id: event.requestId } : {}),
+        },
+        extra: {
+          ...event.extras,
+          ...(event.latencyMs !== undefined ? { latency_ms: event.latencyMs } : {}),
+          ...(event.status !== undefined ? { status: event.status } : {}),
+          ...(event.modelUsed ? { model: event.modelUsed } : {}),
+        },
       }),
     })
   } catch {
