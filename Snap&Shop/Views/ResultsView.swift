@@ -34,7 +34,16 @@ struct ResultsView: View {
             }
             .navigationTitle("Results")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { saveButton }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image("AppLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+                saveButton
+            }
         }
     }
 
@@ -71,14 +80,11 @@ struct ResultsView: View {
 
     private var productHeader: some View {
         HStack(spacing: Spacing.lg) {
-            ZStack {
-                RoundedRectangle(cornerRadius: Radius.md)
-                    .fill(Color.Brand.surfaceAlt)
-                    .frame(width: 80, height: 80)
-                Image(systemName: "headphones")
-                    .font(.system(size: 32))
-                    .foregroundStyle(Color.Brand.textSecondary)
-            }
+            Image("product_headphones")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.md))
             VStack(alignment: .leading, spacing: Spacing.xs) {
                 Text("Sony WH-1000XM5 Headphones")
                     .font(Typography.headline)
