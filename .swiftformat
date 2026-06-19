@@ -1,0 +1,13 @@
+--indent 4
+--linebreaks lf
+--trimwhitespace always
+--semicolons never
+--wraparguments preserve
+--wrapcollections preserve
+--closingparen balanced
+--importgrouping testable-last
+--swiftversion 5.9
+--exclude Snap&Shop.xcodeproj,.build,DerivedData,.github
+--disable trailingCommas,wrapPropertyBodies,hoistPatternLet
+--disable blankLinesAtStartOfScope,blankLinesAtEndOfScope,blankLinesAroundMark
+--disable redundantAsync,redundantThrows,sortImports,andOperator,spaceAroundOperators

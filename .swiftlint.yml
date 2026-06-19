@@ -1,0 +1,61 @@
+disabled_rules:
+  - trailing_whitespace
+  - todo
+  - static_over_final_class
+
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - closure_spacing
+  - collection_alignment
+  - operator_usage_whitespace
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 1000
+
+function_body_length:
+  warning: 60
+  error: 100
+
+function_parameter_count:
+  warning: 6
+  error: 8
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+# Allow underscore-separated names from Xcode templates (Snap_ShopApp, etc.)
+type_name:
+  allowed_symbols: "_"
+
+# Allow short domain-specific names used throughout the token system and views
+identifier_name:
+  excluded:
+    - xs
+    - sm
+    - md
+    - lg
+    - xl
+    - xxl
+    - xxxl
+    - id
+    - bg
+    - on
+
+excluded:
+  - Snap&Shop.xcodeproj
+  - .build
+  - DerivedData
+  - .github
