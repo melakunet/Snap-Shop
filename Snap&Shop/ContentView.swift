@@ -1,68 +1,65 @@
+//
+//  ContentView.swift
+//  Snap&Shop
+//
+//  Created by Etefworkie Melaku on 2026-05-29.
+//
+
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showOnboarding = true
-    @State private var showPaywall = false
-    @State private var selectedTab: Tab = .camera
+    /// Persisted across launches so the user returns to where they left off
+    @AppStorage("selectedTab") private var selectedTab: Tab = .scan
+    /// Set to true by OnboardingFlow once the user taps "Get started"
+    @AppStorage("hasOnboarded") private var hasOnboarded = false
 
     var body: some View {
-        Group {
-            if showOnboarding {
-                OnboardingView {
-                    withAnimation(.easeInOut) { showOnboarding = false }
-                }
-            } else {
-                mainTabs
-            }
-        }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
-    }
-
-    private var mainTabs: some View {
-        TabView(selection: $selectedTab) {
-            CameraView()
-                .tabItem {
-                    Label("Scan", systemImage: "camera.viewfinder")
-                }
-                .tag(Tab.camera)
-
-            ResultsView()
-                .tabItem {
-                    Label("Results", systemImage: "list.bullet.below.rectangle")
-                }
-                .tag(Tab.results)
-
-            HistoryView()
-                .tabItem {
-                    Label("History", systemImage: "clock.arrow.circlepath")
-                }
-                .tag(Tab.history)
-
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .tag(Tab.settings)
-        }
-        .tint(Color.Brand.accent)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showPaywall = true
-                } label: {
-                    Label("Pro", systemImage: "sparkles")
-                        .font(Typography.callout.weight(.semibold))
-                        .foregroundStyle(Color.Brand.accent)
-                }
+        if hasOnboarded {
+            RootTabView(selectedTab: $selectedTab)
+        } else {
+            OnboardingView {
+                hasOnboarded = true
             }
         }
     }
 }
 
-private enum Tab {
-    case camera, results, history, settings
+// MARK: - Tab bar
+
+struct RootTabView: View {
+    @Binding var selectedTab: Tab
+
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            CameraView()
+                .tabItem { Label("Scan", systemImage: "camera") }
+                .tag(Tab.scan)
+
+            HistoryView()
+                .tabItem { Label("History", systemImage: "clock.arrow.circlepath") }
+                .tag(Tab.history)
+
+            SavedView()
+                .tabItem { Label("Saved", systemImage: "heart") }
+                .tag(Tab.saved)
+
+            AlertsView()
+                .tabItem { Label("Alerts", systemImage: "bell") }
+                .tag(Tab.alerts)
+
+            SettingsView()
+                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(Tab.settings)
+        }
+        .tint(Color.Brand.accent)
+    }
+}
+
+// MARK: - Tab enum
+
+/// String raw value lets @AppStorage persist the selection across launches
+enum Tab: String {
+    case scan, history, saved, alerts, settings
 }
 
 #Preview {
