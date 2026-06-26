@@ -85,7 +85,11 @@ final class CameraSession: NSObject, ObservableObject {
 }
 
 extension CameraSession: AVCapturePhotoCaptureDelegate {
-    nonisolated func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+    nonisolated func photoOutput(
+        _ output: AVCapturePhotoOutput,
+        didFinishProcessingPhoto photo: AVCapturePhoto,
+        error: Error?
+    ) {
         let data = photo.fileDataRepresentation()
         DispatchQueue.main.async {
             self.isCapturing = false
