@@ -4,13 +4,13 @@ import AVFoundation
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
 
-    func makeUIView(context: Context) -> PreviewUIView {
+    func makeUIView(context _: Context) -> PreviewUIView {
         let view = PreviewUIView()
         view.session = session
         return view
     }
 
-    func updateUIView(_ uiView: PreviewUIView, context: Context) {}
+    func updateUIView(_: PreviewUIView, context _: Context) {}
 }
 
 final class PreviewUIView: UIView {
@@ -29,5 +29,8 @@ final class PreviewUIView: UIView {
         previewLayer?.videoGravity = .resizeAspectFill
     }
 
-    required init?(coder: NSCoder) { fatalError() }
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
+    }
 }
