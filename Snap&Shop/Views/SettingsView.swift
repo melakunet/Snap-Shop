@@ -16,6 +16,9 @@ struct SettingsView: View {
                 notificationsSection
                 privacySection
                 accountSection
+                #if DEBUG
+                    developerSection
+                #endif
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
@@ -166,6 +169,24 @@ struct SettingsView: View {
             .foregroundStyle(Color.Brand.textSecondary)
             .textCase(nil)
     }
+
+    #if DEBUG
+        private var developerSection: some View {
+            Section {
+                NavigationLink {
+                    ComponentGallery()
+                } label: {
+                    Label("Design system", systemImage: "paintbrush")
+                        .font(Typography.body)
+                        .foregroundStyle(Color.Brand.textPrimary)
+                }
+            } header: {
+                sectionHeader("Developer")
+            }
+            .listRowBackground(Color.Brand.surface)
+            .listRowSeparatorTint(Color.Brand.border)
+        }
+    #endif
 }
 
 private struct Retailer: Identifiable {

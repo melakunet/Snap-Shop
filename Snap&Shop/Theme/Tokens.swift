@@ -1,3 +1,10 @@
+//
+//  Tokens.swift
+//  Snap&Shop
+//
+//  Created by Etefworkie Melaku on 2026-05-29.
+//
+
 import SwiftUI
 import UIKit
 
@@ -107,4 +114,8 @@ enum Radius {
     static let sm: CGFloat = 8
     static let md: CGFloat = 12
     static let lg: CGFloat = 16
+    /// Semantic alias for card surfaces — same value as md, named for intent.
+    static let card: CGFloat = 12
+    /// Fully-rounded shape; renders as a capsule on any fixed-height view.
+    static let pill: CGFloat = 999
 }
