@@ -76,19 +76,19 @@ final class CameraSession: NSObject, ObservableObject {
         sessionQueue.async { [weak self] in
             guard let self else { return }
             let settings = AVCapturePhotoSettings()
-            if self.photoOutput.supportedFlashModes.contains(.on) {
+            if photoOutput.supportedFlashModes.contains(.on) {
                 settings.flashMode = flashOn ? .on : .off
             }
-            self.photoOutput.capturePhoto(with: settings, delegate: self)
+            photoOutput.capturePhoto(with: settings, delegate: self)
         }
     }
 }
 
 extension CameraSession: AVCapturePhotoCaptureDelegate {
     nonisolated func photoOutput(
-        _ output: AVCapturePhotoOutput,
+        _: AVCapturePhotoOutput,
         didFinishProcessingPhoto photo: AVCapturePhoto,
-        error: Error?
+        error _: Error?
     ) {
         let data = photo.fileDataRepresentation()
         DispatchQueue.main.async {
